@@ -30,7 +30,8 @@ enum layout_names {
 
 enum custom_keycodes {
     KC_CCCV = SAFE_RANGE,  // Hold to copy, tap to paste
-    KC_WINLCK,  //Toggles Win key on and off
+    KC_WLCK,    // Toggles Win key on and off
+    KC_EQDV,    // Sends '=' 30x to serve as a divider
 
     KC_SECRET_1,
     KC_SECRET_2,
@@ -93,6 +94,13 @@ enum combos {
 
 #define KC_RESET RESET
 #define KC_RST KC_RESET
+
+#define KC_SWNL SWIN(KC_LEFT)
+#define KC_SWNR SWIN(KC_RIGHT)
+#define KC_SNAP SWIN(KC_S)
+#define KC_CAD C(A(KC_DEL))
+
+#define KC_MAC TG(MACOS)
 
 #define OS_GIT OSL(GIT)
 #define TT_FN TT(FUNCTIONS)
