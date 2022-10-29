@@ -50,7 +50,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             record->event.time, record->tap.interrupted, record->tap.count);
 #endif  // KEYLOGGER_ENABLE
     switch (keycode) {
-        case KC_WINLCK:
+        case KC_WLCK:
             if (record->event.pressed) {
                 _isWinKeyDisabled = !_isWinKeyDisabled; //toggle status
                 if(_isWinKeyDisabled) {
@@ -60,6 +60,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             } else {
                 unregister_code16(keycode);
+            }
+            break;
+
+        case KC_EQDV:
+             if (record->event.pressed) {
+               SEND_STRING("==============================");
             }
             break;
 

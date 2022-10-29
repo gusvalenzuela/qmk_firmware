@@ -18,7 +18,7 @@ MOUSEKEY_ENABLE = no
 RGB_MATRIX_LEDMAPS = yes
 
 SRC += utils.c
-SRC += mike1808.c
+SRC += guzilla.c
 SRC += process_record.c
 SRC += encoder.c
 
