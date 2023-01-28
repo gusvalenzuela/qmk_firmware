@@ -25,6 +25,7 @@ static uint8_t state = ENCODER_DEFAULT;
 // clang-format off
 const encoder_callback encoder_mapping[][2] = {
     [ENCODER_VOLUME] = {&volume_up, &volume_down},
+    [ENCODER_NAVIGATION] = {&page_up, &page_down},
 #ifdef RGB_MATRIX_ENABLE
     [ENCODER_RGB_HUE] = {&rgb_matrix_increase_hue_noeeprom, &rgb_matrix_decrease_hue_noeeprom},
     [ENCODER_RGB_SAT] = {&rgb_matrix_increase_sat_noeeprom, &rgb_matrix_decrease_sat_noeeprom},
@@ -36,20 +37,42 @@ const encoder_callback encoder_mapping[][2] = {
 
 // clang-format on
 
-void volume_up() { tap_code(KC_VOLU); }
+void volume_up() {
+    tap_code(KC_VOLU);
+}
 
-void volume_down() { tap_code(KC_VOLD); }
+void volume_down() {
+    tap_code(KC_VOLD);
+}
+
+void page_up() {
+    tap_code(KC_PGUP);
+}
+
+void page_down() {
+    tap_code(KC_PGDN);
+}
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
     dprintf("current encoder state is: %d\n", state);
 
-    if (clockwise) {
-        (*encoder_mapping[state][0])();
-    } else {
-        (*encoder_mapping[state][1])();
+    switch (get_highest_layer(layer_state | default_layer_state)) {
+        case SHORTCUTS:
+            if (clockwise) {
+                tap_code(KC_PGDN);
+            } else {
+                tap_code(KC_PGUP);
+            }
+            break;
+        default:
+            if (clockwise) {
+                (*encoder_mapping[state][0])();
+            } else {
+                (*encoder_mapping[state][1])();
+            }
     }
 
-    return true;
+    return false;
 }
 
 void handle_rgb_key(bool pressed) {
@@ -69,14 +92,14 @@ void keyboard_post_init_encoder() {
 }
 
 bool process_record_encoder(uint16_t keycode, keyrecord_t *record) {
-#ifdef RGB_MATRIX_ENABLE
     switch (keycode) {
+#ifdef RGB_MATRIX_ENABLE
         case KC_RGB_ENC_HUE ... KC_RGB_ENC_EFFECT:
             if (record->event.pressed) {
 #    ifdef RGB_MATRIX_LEDMAPS_ENABLED
                 // disable layers so we can adjust RGB effects
                 rgb_state->press(rgb_state);
-#    endif  // RGB_MATRIX_LEDMAPS_ENABLED
+#    endif // RGB_MATRIX_LEDMAPS_ENABLED
 
                 switch (keycode) {
                     case KC_RGB_ENC_HUE:
@@ -98,14 +121,15 @@ bool process_record_encoder(uint16_t keycode, keyrecord_t *record) {
             } else {
 #    ifdef RGB_MATRIX_LEDMAPS_ENABLED
                 rgb_state->release(rgb_state);
-#    endif  // RGB_MATRIX_LEDMAPS_ENABLED
+#    endif // RGB_MATRIX_LEDMAPS_ENABLED
                 state = ENCODER_DEFAULT;
                 store_rgb_state_to_eeprom();
             }
+            break;
+#endif // RGB_MATRIX_ENABLE
 
             return false;
     }
-#endif  // RGB_MATRIX_ENABLE
 
     return true;
 }

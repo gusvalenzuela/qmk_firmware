@@ -18,20 +18,30 @@
 #include "rgb_matrix_ledmaps.h"
 
 enum layout_names {
-    _BASE = 0,  // Base Layout: The main keyboard layout that has all the characters
+    _BASE = 0,      // Base Layout: The main keyboard layout that has all the characters
     MACOS,      // Base Layout for MacOS
-    _FN1,       // Base FN layer
+    FN_KEYS,         // Base FN layer
+    LOCK,           // Different 'locking' keys
+    SHORTCUTS ,     // Shortcuts
+    TEXT,           // Layer with quick text entries
+    UNIC_LAYER,        // UNICODE layer
+    GIT,            // GIT Layout: GIT shortcuts and macros
+    RGB_LAYER,      // Change RGB effects and settings
     NO_KEYS,    // Disable all keys (except Mute)
-    FUNCTIONS,  // Function Layout: RGB functions and some added ones
-    GIT,        // GIT Layout: GIT shortcuts and macros
-    SECRETS,    // Layer with secrets
 };
-
-
 enum custom_keycodes {
     KC_CCCV = SAFE_RANGE,  // Hold to copy, tap to paste
-    KC_WLCK,    // Toggles Win key on and off
+    KC_WDOT,    // Tap = dot, hold = emoji menu (GUI + .)
+    KC_CAFF,
+    KC_CZCY,    // Hold to redo, tap to undo
+
     KC_EQDV,    // Sends '=' 30x to serve as a divider
+    KC_QTEX,    // Sends path to qmk folder
+
+    // UNICODE
+    UC_LENN,
+    UC_DISS,
+    UC_SHRG,
 
     KC_SECRET_1,
     KC_SECRET_2,
@@ -46,6 +56,7 @@ enum custom_keycodes {
     KC_RGB_ENC_EFFECT_SPEED,
     KC_RGB_ENC_EFFECT,
 
+    KC_WLCK,    // Toggles Win key on and off
     KC_WPM_RGB,
 };
 
@@ -65,16 +76,35 @@ enum git_macros {
     G_FETCH,                  // git fetch
     G_PULL,                   // git pull
     G_PUSH,                   // git push
-    G_COMM,                   // git commit
+    G_COMM,                   // git commit -m ""
     G_STAT,                   // git status
     G_LOG,                    // git log
     NEW_SAFE_RANGE,
 };
-
+enum {
+    PSCR_SNAP,
+    MEDIA_TD,
+    RSFT_CAPS,
+};
 enum combos {
     JK_ESC,  // jk to ESC for Vim
     SEC_TT, // Both Mod buttons
     LG_SNAP, // LCTL + LGUI
+    FNL_TOGFNLAYER, // FN + L
+    LALT_GUI_HDR, // LALT + LGUI
+};
+
+enum unicode_names {
+    INDEX_UP,
+    THUMB_UP,
+    INDEX_DOWN,
+    THUMB_DOWN,
+    THINK_FACE,
+    FACE_TEARS,
+    ROFL_FACE,
+    PERSON_SHRUG,
+    RED_HEART,
+    HEART_EYES
 };
 
 #define KC_SEC1 KC_SECRET_1
@@ -100,13 +130,25 @@ enum combos {
 #define KC_SNAP SWIN(KC_S)
 #define KC_CAD C(A(KC_DEL))
 
-#define KC_MAC TG(MACOS)
+#define TD_SNAP TD(PSCR_SNAP)
+#define TD_PLAY TD(MEDIA_TD)
+#define TD_CAPS TD(RSFT_CAPS)
 
-#define OS_GIT OSL(GIT)
-#define TT_FN TT(FUNCTIONS)
-#define OS_SEC OSL(SECRETS)
-#define MO_FN MO(_FN1)
+
+#define MO_SCUT MO(SHORTCUTS)
+#define MO_FKEY MO(FN_KEYS)
+#define MO_QUOT LT(SHORTCUTS, KC_QUOT)
+
 #define TT_DSBL TT(NO_KEYS)
+#define OS_LOCK OSL(LOCK)
+#define OS_GIT OSL(GIT)
+#define OS_SEC OSL(TEXT)
+#define OS_UNIC OSL(UNIC_LAYER)
+#define DF_MAC DF(MACOS)
+#define DF_FN DF(FN_KEYS)
+#define DF_WIN DF(_BASE)
+#define TT_RGB TT(RGB_LAYER)
+#define TO_FNKY TO(FN_KEYS)
 
 #define OS_LGUI OSM(MOD_LGUI)
 #define OS_RGUI OSM(MOD_RGUI)
@@ -121,3 +163,9 @@ enum combos {
 
 #define CAPS_LOCK_COLOR HSV_RED
 
+#define X_ROFL XP(FACE_TEARS, ROFL_FACE)
+#define X_FINDN XP(THUMB_DOWN, INDEX_DOWN)
+#define X_FINUP XP(THUMB_UP, INDEX_UP)
+#define X_HEART XP(RED_HEART, HEART_EYES)
+#define X_THINK X(THINK_FACE)
+#define X_SHRUG X(PERSON_SHRUG)

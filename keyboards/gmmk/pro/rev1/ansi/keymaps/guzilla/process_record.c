@@ -30,30 +30,34 @@ __attribute__((weak)) bool process_record_fun(uint16_t keycode, keyrecord_t *rec
     return true;
 }
 
-__attribute__((weak)) void keyboard_post_init_encoder(void) { return; }
-
+__attribute__((weak)) void keyboard_post_init_encoder(void) {
+    return;
+}
 static const char *git_commands[] = {
-    "git init ",     "git clone ", "git config --global ", "git add ",
-    "git diff ",     "git reset ", "git rebase ",          "git branch -b \"",
-    "git checkout ", "git merge ", "git remote add ",      "git fetch ",
-    "git pull ",     "git push ",  "git commit ",          "git status ",
-    "git log ",
+    "git init ", "git clone ", "git config --global ", "git add ", "git diff ", "git reset ", "git rebase ", "git branch -b \"", "git checkout ", "git merge ", "git remote add ", "git fetch ", "git pull ", "git push ", "git commit -m \"", "git status ", "git log ",
+};
+static const char *text_blocks[] = {
+    "==============================", "OneDrive/opt/qmk_firmware_prime", ".en", ".en.sdh", ".com", "https://", "localhost:", "gpupdate /force",
+};
+static const char *unicode_blocks[] = {
+    "( ͡° ͜ʖ ͡°)",
+    "ಠ_ಠ",
+    "¯\\_(ツ)_/¯",
 };
 
 bool _isWinKeyDisabled = false;
+bool _CaffeineStatus   = true;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // If console is enabled, it will print the matrix position and status of each key pressed
 #ifdef KEYLOGGER_ENABLE
-    uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %b, time: %5u, int: %b, count: %u\n",
-            keycode, record->event.key.col, record->event.key.row, record->event.pressed,
-            record->event.time, record->tap.interrupted, record->tap.count);
-#endif  // KEYLOGGER_ENABLE
+    uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %b, time: %5u, int: %b, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
+#endif // KEYLOGGER_ENABLE
     switch (keycode) {
         case KC_WLCK:
             if (record->event.pressed) {
-                _isWinKeyDisabled = !_isWinKeyDisabled; //toggle status
-                if(_isWinKeyDisabled) {
+                _isWinKeyDisabled = !_isWinKeyDisabled; // toggle status
+                if (_isWinKeyDisabled) {
                     process_magic(GUI_OFF, record);
                 } else {
                     process_magic(GUI_ON, record);
@@ -63,29 +67,69 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
 
-        case KC_EQDV:
-             if (record->event.pressed) {
-               SEND_STRING("==============================");
-            }
-            break;
-
-        case KC_CCCV:  // One key copy/paste
+        case KC_CCCV ... KC_CZCY: // One key tap/hold
             if (record->event.pressed) {
                 copy_paste_timer = timer_read();
             } else {
-                if (timer_elapsed(copy_paste_timer) > TAPPING_TERM) {  // Hold, copy
-                    if (layer_state_is(MACOS)) {
-                        tap_code16(LGUI(KC_C));
-                    } else {
-                        tap_code16(LCTL(KC_C));
+                if (timer_elapsed(copy_paste_timer) > TAPPING_TERM) {
+                    // HOLD
+                    switch (keycode) {
+                        case KC_CCCV:
+                            tap_code16(LCTL(KC_C));
+                            break;
+                        case KC_CZCY:
+                            tap_code16(LCTL(KC_Y));
+                            break;
+                        case KC_WDOT:
+                            tap_code16(G(KC_DOT));
+                            break;
+                        case KC_CAFF:
+                            // Stop Caffeine Status
+                            copy_paste_timer = 0;
+                            // _CaffeineStatus = false; // stops caffeine macro
+
+                            break;
                     }
-                } else {  // Tap, paste
-                    if (layer_state_is(MACOS)) {
-                        tap_code16(LGUI(KC_V));
-                    } else {
-                        tap_code16(LCTL(KC_V));
+                } else {
+                    // TAP
+                    switch (keycode) {
+                        case KC_CCCV:
+                            tap_code16(LCTL(KC_V));
+                            break;
+                        case KC_CZCY:
+                            tap_code16(LCTL(KC_Z));
+                            break;
+                        case KC_WDOT:
+                            tap_code(KC_DOT);
+                            break;
+                        case KC_CAFF:
+                            // Tap  every 3 sec until stopped
+                            while (copy_paste_timer > 0) {
+                                SEND_STRING("A" SS_DELAY(3000));
+                                // _CaffeineStatus = true; // toggle status
+                            }
+                            unregister_code(keycode);
+
+                            break;
                     }
                 }
+            }
+            return false;
+            break;
+
+        case KC_EQDV ... KC_QTEX:
+            if (record->event.pressed) {
+                clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
+                send_string_with_delay(text_blocks[keycode - KC_EQDV], MACRO_TIMER);
+                return false;
+            }
+            break;
+
+        case UC_LENN ... UC_SHRG:
+            if (record->event.pressed) {
+                clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
+                send_unicode_string(unicode_blocks[keycode - UC_LENN]);
+                return false;
             }
             break;
 
@@ -121,11 +165,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-#endif  // RGB_MATRIX_ENABLE
+#endif // RGB_MATRIX_ENABLE
     }
 
-    return process_record_encoder(keycode, record) && process_record_secrets(keycode, record) &&
-           process_record_fun(keycode, record);
+    return process_record_encoder(keycode, record) && process_record_secrets(keycode, record) && process_record_fun(keycode, record);
 }
 
-void keyboard_post_init_user() { keyboard_post_init_encoder(); }
+void keyboard_post_init_user() {
+    keyboard_post_init_encoder();
+}

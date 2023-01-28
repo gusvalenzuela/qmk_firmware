@@ -1,21 +1,23 @@
 VIA_ENABLE = no
 
-COMBO_ENABLE = yes
-COMMAND_ENABLE = yes
-RGB_MATRIX_ENABLE = yes
-RAW_ENABLE = no
+DEBOUNCE_TYPE = asym_eager_defer_pk
+
 CONSOLE_ENABLE = yes
+COMMAND_ENABLE = yes
+RAW_ENABLE = no
 
-WPM_ENABLE = no
+RGB_MATRIX_LEDMAPS = yes
+UNICODEMAP_ENABLE = yes
 
+WPM_ENABLE = yes
 MIDI_ENABLE=yes
 
 # Disabling MouseKey to avoid KVM switch issues
 MOUSEKEY_ENABLE = no
 
-# TAP_DANCE_ENABLE = yes
-
-RGB_MATRIX_LEDMAPS = yes
+COMBO_ENABLE = yes
+TAP_DANCE_ENABLE = yes
+DYNAMIC_MACRO_ENABLE = yes
 
 SRC += utils.c
 SRC += guzilla.c
