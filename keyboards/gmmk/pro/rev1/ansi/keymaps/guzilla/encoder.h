@@ -20,6 +20,7 @@
 
 enum encoder_state {
     ENCODER_VOLUME = 0,
+    ENCODER_NAVIGATION,
     ENCODER_RGB_HUE,
     ENCODER_RGB_SAT,
     ENCODER_RGB_VAL,
@@ -33,3 +34,5 @@ typedef void (*encoder_callback)(void);
 
 void volume_up(void);
 void volume_down(void);
+void page_up(void);
+void page_down(void);

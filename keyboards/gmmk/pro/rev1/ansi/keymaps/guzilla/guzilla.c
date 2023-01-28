@@ -26,15 +26,21 @@ static const char *const secrets[] = {"secret1", "secret2", "secret3", "secret4"
 // userspace_config_t userspace_config;
 
 bool process_record_secrets(uint16_t keycode, keyrecord_t *record) {
+
     switch (keycode) {
         case KC_SECRET_1 ... KC_SECRET_6: // Secrets!  Externally defined strings, not stored in repo
             if (!record->event.pressed) {
+                if ((keycode == KC_SECRET_6 ) & !get_mods()) {
+                    return false;
+                }
+                clear_mods(); // disable mods so string is sent unmodified
                 clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
                 send_string_with_delay(secrets[keycode - KC_SECRET_1], MACRO_TIMER);
             }
             return false;
             break;
     }
+
     return true;
 }
 
