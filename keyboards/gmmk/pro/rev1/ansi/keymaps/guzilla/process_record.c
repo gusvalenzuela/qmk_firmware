@@ -37,7 +37,7 @@ static const char *git_commands[] = {
     "git init ", "git clone ", "git config --global ", "git add ", "git diff ", "git reset ", "git rebase ", "git branch -b \"", "git checkout ", "git merge ", "git remote add ", "git fetch ", "git pull ", "git push ", "git commit -m \"", "git status ", "git log ",
 };
 static const char *text_blocks[] = {
-    "==============================", "OneDrive/opt/qmk_firmware_prime", ".en", ".en.sdh", ".com", "https://", "localhost:", "gpupdate /force",
+    "==============================","\\^_^/", "OneDrive/opt/qmk_firmware_prime", ".en", ".en.sdh", ".com", "https://", "localhost:", "gpupdate /force",
 };
 static const char *unicode_blocks[] = {
     "( ͡° ͜ʖ ͡°)",

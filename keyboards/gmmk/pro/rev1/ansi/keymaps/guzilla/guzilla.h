@@ -36,6 +36,7 @@ enum custom_keycodes {
     KC_CZCY,    // Hold to redo, tap to undo
 
     KC_EQDV,    // Sends '=' 30x to serve as a divider
+    KC_WOOT,    // types: \^_^/
     KC_QTEX,    // Sends path to qmk folder
 
     // UNICODE
@@ -121,6 +122,7 @@ enum unicode_names {
 #define KC_RGBP KC_RGB_ENC_EFFECT_SPEED
 
 #define KC_WRGB KC_WPM_RGB
+#define KC_NLCK KC_NUM_LOCK
 
 #define KC_RESET RESET
 #define KC_RST KC_RESET
